@@ -31,7 +31,7 @@ def excluir_ficha():
         print("Não há fichas cadastradas para excluir.")
         return
 
-    #
+    #Exclui as ficha que vc criou
     try:
         indice = int(input('\nDigite o número da ficha que deseja excluir: ')) - 1
 
@@ -46,7 +46,7 @@ def excluir_ficha():
 
 def menu():
     while True:
-        print('\n---------- Menu fichas de RPG ----------')
+        print('\n---------- Menu fichas de RPG ------------')
         print('1. Adicionar ficha de personagem')
         print('2. Ver fichas disponíveis')
         print('3. Excluir ficha personagem')
