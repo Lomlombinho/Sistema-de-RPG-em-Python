@@ -5,9 +5,26 @@ def criar_ficha(): # função para criar as fichas
 
     nome = input('Digite o nome do seu personagem: ')
     classe = input('Digite a classe do seu personagem: ')
-    nivel = input('Digite o nível do seu personagem: ')
+    nivel = int(input('Digite o nível do seu personagem: '))
 
-    personagem = {"nome": nome, "classe": classe, "nivel": nivel}
+    try:
+        v_forca = int(input('Digite o valor de sua força: '))
+        v_magia = int(input('Digite o valor de sua magia: '))
+        v_agilidade = int(input('Digite o valor de sua agilidade: '))
+    except ValueError:
+        print('Apenas digite números caro gafanhoto')
+        return
+
+    personagem= {
+        "nome": nome,
+        "classe": classe,
+        "nivel": nivel,
+        "forca": v_forca,
+        "magia": v_magia,
+        "agilidade": v_agilidade
+    }
+
+
     fichas_rpg.append(personagem)
     print('Ficha criada com sucesso!')
 
@@ -20,7 +37,8 @@ def ficha_disponivel():# função para verificar as fichas
     else:# Mostra as fichas e usa o for para enumerar as fichas cadastradas
         print('\n---------|Fichas cadastradas|---------- ')
         for i, f in enumerate(fichas_rpg):
-            print(f"{i + 1}. Nome: {f['nome']} | Classe: {f['classe']} | Nível: {f['nivel']}")
+            print(
+                f"{i + 1}. Nome: {f['nome']} | Classe: {f['classe']} | Nível: {f['nivel']} | Força: {f['forca']} | Magia: {f['magia']} | Agilidade: {f['agilidade']}")
 
 
 def excluir_ficha():
@@ -44,14 +62,17 @@ def excluir_ficha():
     except ValueError:
         print("Erro: Por favor, digite um número inteiro.")
 
+#Menu onde executará os comandos
 def menu():
     while True:
         print('\n---------- Menu fichas de RPG ------------')
         print('1. Adicionar ficha de personagem')
         print('2. Ver fichas disponíveis')
         print('3. Excluir ficha personagem')
-        print('4. Sair do programa')
+        print('4. Começar batalha para testar ficha')
+        print('5. Sair do programa')
 
+#estrutura de escolha das opções
         try:
             opcao = int(input('\nDigite a opção que deseja fazer: '))
 
@@ -65,15 +86,16 @@ def menu():
                 excluir_ficha()
 
             elif opcao == 4:
+                menu_batalha()
+
+            elif opcao == 5:
                 print("\nSaindo...")
                 break
 
             else:
                 print("Opção inválida!")
         except ValueError:
-            print("Erro: Digite apenas números de 1 a 4.")
-
-menu()
+            print("Erro: Digite apenas números de 1 a 5.")
 
 
 #usada pra gerar as estatísticas dos inimigos
@@ -84,16 +106,38 @@ def calculo_poder(v_forca, v_magia, v_agilidade):
     poder_total = (v_forca * 2) + v_magia + v_agilidade
     return poder_total
 
+def escolher_ficha():
+    ficha_disponivel()
+
+    if not fichas_rpg:
+        return None
+
+    try:
+        escolha = int(input("\nEscolha o número da ficha: ")) - 1
+
+        if 0 <= escolha < len(fichas_rpg):
+            return fichas_rpg[escolha]
+        else:
+            print("Escolha inválida.")
+            return None
+
+    except ValueError:
+        print("Digite um número válido.")
+        return None
+
 #função de pra definir o ranking de poder do personagem oreia seca
 def definir_ranking(poder):
     if poder < 100:
         return 'Bronze'
-    elif poder >= 100 and poder <= 199:
+
+    elif poder < 200:
         return 'Prata'
-    elif poder >= 200 and poder <= 499:
+
+    elif poder < 500:
         return 'Ouro'
+
     else:
-        return 'lendario'
+        return 'Lendário'
 
 #função pra calcular o dano do oreia seca
 def calcular_dano(ataque, defesa):
@@ -111,7 +155,7 @@ def sistema_batalha(poder_total, v_agilidade):
     while vida_player > 0 and jogando:
 
 #gera vida, ataque e defesa aleatória do nosso inimigo
-        vida_inimigo = random.randint(50, 100)
+        vida_inimigo = random.randint(150, 200)
         ataque_inimigo = random.randint(15, 25)
         defesa_inimigo = random.randint(5, 15)
 
@@ -146,13 +190,20 @@ def sistema_batalha(poder_total, v_agilidade):
     return inimigos_mortos
 
 #menu onde vc coloca as informações do oreia seca
-def menu():
-    print('\n--- Criação do seu personagem ---\n')
-    nome_personagem = input('Digite o nome do seu personagem: ')
-    classe_personagem = input('Digite a classe do seu personagem: ')
-    v_forca = int(input('Digite o valor de sua força: '))
-    v_magia = int(input('Digite o valor de sua magia: '))
-    v_agilidade = int(input('Digite o valor de sua agilidade: '))
+def menu_batalha():
+    print('\n--- Escolha seu personagem ---\n')
+
+    personagem = escolher_ficha()
+
+    if personagem is None:
+        print("Nenhuma ficha válida selecionada.")
+        return
+
+    nome_personagem = personagem["nome"]
+    classe_personagem = personagem["classe"]
+    v_forca = personagem["forca"]
+    v_magia = personagem["magia"]
+    v_agilidade = personagem["agilidade"]
 
     poder_personagem = calculo_poder(v_forca, v_magia, v_agilidade)
     ranking_final = definir_ranking(poder_personagem)
@@ -168,5 +219,6 @@ def menu():
     print(f"Ranking: {ranking_final}")
     print(f"Inimigos Derrotados: {total_derrotados}")
     print("=" * 30)
-menu()
 
+
+menu()

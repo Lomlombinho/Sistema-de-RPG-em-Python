@@ -1,6 +1,5 @@
 fichas_rpg = [] #lista onde armazena as fichas dos personagens
 
-
 def criar_ficha(): # função para criar as fichas
 
     nome = input('Digite o nome do seu personagem: ')
